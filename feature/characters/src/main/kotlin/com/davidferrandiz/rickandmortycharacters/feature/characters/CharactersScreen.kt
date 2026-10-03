@@ -2,6 +2,7 @@ package com.davidferrandiz.rickandmortycharacters.feature.characters
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,6 +44,7 @@ internal val MIN_CARD_WIDTH = 160.dp
 internal val GRID_SPACING = 12.dp
 private val OFFLINE_BAR_CLEARANCE = 88.dp
 private val CARD_CORNER_RADIUS = 20.dp
+private val COMPACT_HEIGHT = 480.dp
 private const val CHARACTER_CONTENT_TYPE = "character"
 private const val FOOTER_CONTENT_TYPE = "footer"
 
@@ -84,14 +87,10 @@ internal fun CharactersContent(
         append = characters.loadState.append,
         itemCount = characters.itemCount,
     )
-    val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .windowInsetsPadding(
-                WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
-            ),
-    ) {
+    val gridState = rememberSaveable(query.trim(), uiState.status, uiState.gender, saver = LazyGridState.Saver) {
+        LazyGridState()
+    }
+    val header: @Composable (Modifier) -> Unit = { headerModifier ->
         CharactersHeader(
             query = query,
             uiState = uiState,
@@ -99,39 +98,34 @@ internal fun CharactersContent(
             onQueryChange = onQueryChange,
             onStatusSelect = onStatusSelect,
             onOpenFilters = { showFilters = true },
+            modifier = headerModifier,
         )
-        Box(modifier = Modifier.weight(1f)) {
-            when (listState) {
-                CharactersListState.Loading -> CharactersSkeleton(
-                    contentPadding = gridPadding(bottom = navigationBarPadding),
-                )
-                CharactersListState.Empty -> CharactersEmpty(
-                    query = query,
-                    onClearFilters = onClearFilters,
-                )
-                is CharactersListState.Error -> CharactersError(
-                    error = listState.error,
-                    onRetry = characters::retry,
-                )
-                is CharactersListState.Content -> {
-                    val refreshError = listState.refreshError
-                    CharactersGrid(
-                        characters = characters,
-                        contentPadding = gridPadding(
-                            bottom = navigationBarPadding + if (refreshError != null) OFFLINE_BAR_CLEARANCE else 0.dp,
-                        ),
-                        onCharacterClick = onCharacterClick,
-                    )
-                    if (refreshError != null) {
-                        OfflineBar(
-                            error = refreshError,
-                            onRetry = characters::retry,
-                            modifier = Modifier
-                                .align(Alignment.BottomCenter)
-                                .padding(start = 16.dp, end = 16.dp, bottom = 24.dp + navigationBarPadding),
-                        )
-                    }
-                }
+    }
+    val body: @Composable (Dp, Modifier) -> Unit = { topPadding, bodyModifier ->
+        CharactersBody(
+            listState = listState,
+            gridState = gridState,
+            characters = characters,
+            query = query,
+            topPadding = topPadding,
+            onClearFilters = onClearFilters,
+            onCharacterClick = onCharacterClick,
+            modifier = bodyModifier,
+        )
+    }
+    BoxWithConstraints(
+        modifier = modifier
+            .fillMaxSize()
+            .windowInsetsPadding(
+                WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
+            ),
+    ) {
+        if (maxHeight < COMPACT_HEIGHT) {
+            CollapsingHeader(header = header) { headerHeight -> body(headerHeight, Modifier.fillMaxSize()) }
+        } else {
+            Column {
+                header(Modifier)
+                body(0.dp, Modifier.weight(1f))
             }
         }
     }
@@ -147,17 +141,72 @@ internal fun CharactersContent(
     }
 }
 
-private fun gridPadding(bottom: Dp) = PaddingValues(start = 20.dp, top = 8.dp, end = 20.dp, bottom = 28.dp + bottom)
+@Composable
+private fun CharactersBody(
+    listState: CharactersListState,
+    gridState: LazyGridState,
+    characters: LazyPagingItems<Character>,
+    query: String,
+    topPadding: Dp,
+    onClearFilters: () -> Unit,
+    onCharacterClick: (characterId: Int, imageUrl: String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    Box(modifier = modifier) {
+        when (listState) {
+            CharactersListState.Loading -> CharactersSkeleton(
+                contentPadding = gridPadding(top = topPadding, bottom = navigationBarPadding),
+            )
+            CharactersListState.Empty -> CharactersEmpty(
+                query = query,
+                onClearFilters = onClearFilters,
+                modifier = Modifier.padding(top = topPadding),
+            )
+            is CharactersListState.Error -> CharactersError(
+                error = listState.error,
+                onRetry = characters::retry,
+                modifier = Modifier.padding(top = topPadding),
+            )
+            is CharactersListState.Content -> {
+                val refreshError = listState.refreshError
+                CharactersGrid(
+                    characters = characters,
+                    gridState = gridState,
+                    contentPadding = gridPadding(
+                        top = topPadding,
+                        bottom = navigationBarPadding + if (refreshError != null) OFFLINE_BAR_CLEARANCE else 0.dp,
+                    ),
+                    onCharacterClick = onCharacterClick,
+                )
+                if (refreshError != null) {
+                    OfflineBar(
+                        error = refreshError,
+                        onRetry = characters::retry,
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(start = 16.dp, end = 16.dp, bottom = 24.dp + navigationBarPadding),
+                    )
+                }
+            }
+        }
+    }
+}
+
+private fun gridPadding(top: Dp, bottom: Dp) =
+    PaddingValues(start = 20.dp, top = 8.dp + top, end = 20.dp, bottom = 28.dp + bottom)
 
 @Composable
 private fun CharactersGrid(
     characters: LazyPagingItems<Character>,
+    gridState: LazyGridState,
     contentPadding: PaddingValues,
     onCharacterClick: (characterId: Int, imageUrl: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(MIN_CARD_WIDTH),
+        state = gridState,
         horizontalArrangement = Arrangement.spacedBy(GRID_SPACING),
         verticalArrangement = Arrangement.spacedBy(GRID_SPACING),
         contentPadding = contentPadding,
