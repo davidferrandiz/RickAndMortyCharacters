@@ -1,4 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="characters_title">Characters</string>
+    <string name="characters_loading">Loading characters</string>
+    <plurals name="characters_count">
+        <item quantity="one">%1$d character</item>
+        <item quantity="other">%1$d characters</item>
+    </plurals>
+    <string name="filter_all">All</string>
+    <string name="summary_query">“%1$s”</string>
+    <string name="summary_separator">" · "</string>
+    <string name="summary_status_unknown">Status unknown</string>
+    <string name="gender_female">Female</string>
+    <string name="gender_male">Male</string>
+    <string name="gender_genderless">Genderless</string>
+    <string name="summary_gender_unknown">Gender unknown</string>
 </resources>
