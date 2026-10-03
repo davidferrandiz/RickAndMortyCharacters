@@ -7,4 +7,4 @@ import kotlinx.serialization.Serializable
 data object CharactersKey : NavKey
 
 @Serializable
-data class CharacterDetailKey(val characterId: Int) : NavKey
+data class CharacterDetailKey(val characterId: Int, val imageUrl: String) : NavKey

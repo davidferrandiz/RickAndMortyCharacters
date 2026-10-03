@@ -31,6 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,17 +40,19 @@ import com.davidferrandiz.rickandmortycharacters.core.ui.component.PrimaryButton
 import com.davidferrandiz.rickandmortycharacters.core.ui.component.StateMessage
 import com.davidferrandiz.rickandmortycharacters.core.ui.component.messageRes
 import com.davidferrandiz.rickandmortycharacters.core.ui.theme.AppShapes
-import com.davidferrandiz.rickandmortycharacters.core.ui.theme.AppTheme
+import com.davidferrandiz.rickandmortycharacters.core.ui.transition.characterImageSharedElement
+import com.davidferrandiz.rickandmortycharacters.core.ui.transition.slideUpWithScreen
 import com.davidferrandiz.rickandmortycharacters.domain.error.AppError
-import com.davidferrandiz.rickandmortycharacters.domain.model.Character
 import com.davidferrandiz.rickandmortycharacters.core.ui.R as CoreUiR
 
 private val IMAGE_HEIGHT = 372.dp
 private val BODY_OVERLAP = 28.dp
+private val CARD_CORNER_RADIUS = 20.dp
 
 @Composable
 fun CharacterDetailScreen(
     characterId: Int,
+    imageUrl: String,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: CharacterDetailViewModel =
@@ -59,6 +62,8 @@ fun CharacterDetailScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     CharacterDetailContent(
+        characterId = characterId,
+        imageUrl = imageUrl,
         uiState = uiState,
         onBack = onBack,
         onRetry = viewModel::onRetry,
@@ -68,6 +73,8 @@ fun CharacterDetailScreen(
 
 @Composable
 internal fun CharacterDetailContent(
+    characterId: Int,
+    imageUrl: String,
     uiState: CharacterDetailUiState,
     onBack: () -> Unit,
     onRetry: () -> Unit,
@@ -79,16 +86,17 @@ internal fun CharacterDetailContent(
             .background(MaterialTheme.colorScheme.background),
     ) {
         when (uiState) {
-            CharacterDetailUiState.Loading -> Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(IMAGE_HEIGHT)
-                    .background(AppTheme.colors.imagePlaceholder),
-            )
             is CharacterDetailUiState.Error -> DetailError(error = uiState.error, onRetry = onRetry)
+            CharacterDetailUiState.Loading -> DetailBody(
+                characterId = characterId,
+                imageUrl = imageUrl,
+                content = null,
+                onRetry = onRetry,
+            )
             is CharacterDetailUiState.Content -> DetailBody(
-                character = uiState.character,
-                episodes = uiState.episodes,
+                characterId = characterId,
+                imageUrl = imageUrl,
+                content = uiState,
                 onRetry = onRetry,
             )
         }
@@ -103,8 +111,9 @@ internal fun CharacterDetailContent(
 
 @Composable
 private fun DetailBody(
-    character: Character,
-    episodes: EpisodesUiState,
+    characterId: Int,
+    imageUrl: String,
+    content: CharacterDetailUiState.Content?,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -116,30 +125,56 @@ private fun DetailBody(
             .verticalScroll(rememberScrollState()),
     ) {
         CharacterImage(
-            imageUrl = character.imageUrl,
+            imageUrl = imageUrl,
             modifier = Modifier
+                .characterImageSharedElement(
+                    characterId = characterId,
+                    cornerRadius = 0.dp,
+                    counterpartCornerRadius = CARD_CORNER_RADIUS,
+                )
                 .fillMaxWidth()
                 .height(IMAGE_HEIGHT),
         )
-        Column(
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-            modifier = Modifier
-                .padding(top = IMAGE_HEIGHT - BODY_OVERLAP)
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.background, AppShapes.Sheet)
-                .padding(start = 20.dp, top = 24.dp, end = 20.dp, bottom = 32.dp + navigationBarPadding),
-        ) {
-            DetailHeader(character)
-            DetailFacts(character)
-            DetailPlaces(character)
-            DetailEpisodes(
-                episodeCount = character.episodeIds.size,
-                episodes = episodes,
-                expanded = episodesExpanded,
-                onExpandedChange = { episodesExpanded = it },
+        if (content != null) {
+            DetailSections(
+                content = content,
+                episodesExpanded = episodesExpanded,
+                onEpisodesExpandedChange = { episodesExpanded = it },
                 onRetry = onRetry,
+                bottomPadding = navigationBarPadding,
             )
         }
+    }
+}
+
+@Composable
+private fun DetailSections(
+    content: CharacterDetailUiState.Content,
+    episodesExpanded: Boolean,
+    onEpisodesExpandedChange: (Boolean) -> Unit,
+    onRetry: () -> Unit,
+    bottomPadding: Dp,
+) {
+    val character = content.character
+    Column(
+        verticalArrangement = Arrangement.spacedBy(24.dp),
+        modifier = Modifier
+            .padding(top = IMAGE_HEIGHT - BODY_OVERLAP)
+            .slideUpWithScreen()
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.background, AppShapes.Sheet)
+            .padding(start = 20.dp, top = 24.dp, end = 20.dp, bottom = 32.dp + bottomPadding),
+    ) {
+        DetailHeader(character)
+        DetailFacts(character)
+        DetailPlaces(character)
+        DetailEpisodes(
+            episodeCount = character.episodeIds.size,
+            episodes = content.episodes,
+            expanded = episodesExpanded,
+            onExpandedChange = onEpisodesExpandedChange,
+            onRetry = onRetry,
+        )
     }
 }
 

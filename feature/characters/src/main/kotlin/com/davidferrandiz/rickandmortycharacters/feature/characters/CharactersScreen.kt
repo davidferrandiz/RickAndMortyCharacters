@@ -33,6 +33,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import com.davidferrandiz.rickandmortycharacters.core.ui.component.CharacterCard
+import com.davidferrandiz.rickandmortycharacters.core.ui.transition.characterImageSharedElement
 import com.davidferrandiz.rickandmortycharacters.domain.model.Character
 import com.davidferrandiz.rickandmortycharacters.domain.model.CharacterStatus
 import com.davidferrandiz.rickandmortycharacters.domain.model.Gender
@@ -40,12 +41,13 @@ import com.davidferrandiz.rickandmortycharacters.domain.model.Gender
 internal val MIN_CARD_WIDTH = 160.dp
 internal val GRID_SPACING = 12.dp
 private val OFFLINE_BAR_CLEARANCE = 88.dp
+private val CARD_CORNER_RADIUS = 20.dp
 private const val CHARACTER_CONTENT_TYPE = "character"
 private const val FOOTER_CONTENT_TYPE = "footer"
 
 @Composable
 fun CharactersScreen(
-    onCharacterClick: (Int) -> Unit,
+    onCharacterClick: (characterId: Int, imageUrl: String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: CharactersViewModel = hiltViewModel(),
 ) {
@@ -73,7 +75,7 @@ internal fun CharactersContent(
     onStatusSelect: (CharacterStatus?) -> Unit,
     onGenderApply: (Gender?) -> Unit,
     onClearFilters: () -> Unit,
-    onCharacterClick: (Int) -> Unit,
+    onCharacterClick: (characterId: Int, imageUrl: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showFilters by rememberSaveable { mutableStateOf(false) }
@@ -151,7 +153,7 @@ private fun gridPadding(bottom: Dp) = PaddingValues(start = 20.dp, top = 8.dp, e
 private fun CharactersGrid(
     characters: LazyPagingItems<Character>,
     contentPadding: PaddingValues,
-    onCharacterClick: (Int) -> Unit,
+    onCharacterClick: (characterId: Int, imageUrl: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyVerticalGrid(
@@ -173,7 +175,12 @@ private fun CharactersGrid(
                     status = character.status,
                     species = character.species,
                     imageUrl = character.imageUrl,
-                    onClick = { onCharacterClick(character.id) },
+                    onClick = { onCharacterClick(character.id, character.imageUrl) },
+                    imageModifier = Modifier.characterImageSharedElement(
+                        characterId = character.id,
+                        cornerRadius = CARD_CORNER_RADIUS,
+                        counterpartCornerRadius = 0.dp,
+                    ),
                 )
             }
         }
