@@ -11,6 +11,8 @@ import java.io.File
 import javax.inject.Singleton
 import kotlinx.serialization.json.Json
 import okhttp3.Cache
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -44,8 +46,11 @@ internal object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(json: Json, client: OkHttpClient): Retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
+    fun provideRetrofit(json: Json, client: OkHttpClient): Retrofit =
+        retrofit(BASE_URL.toHttpUrl(), json, client)
+
+    fun retrofit(baseUrl: HttpUrl, json: Json, client: OkHttpClient): Retrofit = Retrofit.Builder()
+        .baseUrl(baseUrl)
         .client(client)
         .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .build()
