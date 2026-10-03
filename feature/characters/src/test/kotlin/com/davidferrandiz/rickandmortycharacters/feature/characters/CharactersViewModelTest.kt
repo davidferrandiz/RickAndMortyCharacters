@@ -83,8 +83,7 @@ class CharactersViewModelTest {
         runCurrent()
 
         viewModel.onQueryChange("morty")
-        viewModel.onStatusSelect(CharacterStatus.Alive)
-        viewModel.onGenderApply(Gender.Male)
+        viewModel.onFiltersApply(CharacterStatus.Alive, Gender.Male)
         advanceTimeBy(301)
 
         assertEquals(
@@ -111,8 +110,7 @@ class CharactersViewModelTest {
     fun `clearing everything goes back to the unfiltered list without waiting`() = runTest {
         val viewModel = observedViewModel()
         viewModel.onQueryChange("morty")
-        viewModel.onStatusSelect(CharacterStatus.Alive)
-        viewModel.onGenderApply(Gender.Male)
+        viewModel.onFiltersApply(CharacterStatus.Alive, Gender.Male)
         advanceTimeBy(301)
 
         viewModel.onClearFilters()
@@ -145,8 +143,7 @@ class CharactersViewModelTest {
         runCurrent()
 
         repository.count.value = 826
-        viewModel.onStatusSelect(CharacterStatus.Unknown)
-        viewModel.onGenderApply(Gender.Genderless)
+        viewModel.onFiltersApply(CharacterStatus.Unknown, Gender.Genderless)
         runCurrent()
 
         assertEquals(

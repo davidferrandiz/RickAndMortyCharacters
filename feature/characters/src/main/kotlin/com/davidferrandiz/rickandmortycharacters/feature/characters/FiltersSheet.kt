@@ -34,18 +34,21 @@ import com.davidferrandiz.rickandmortycharacters.core.ui.component.TextAction
 import com.davidferrandiz.rickandmortycharacters.core.ui.component.labelRes
 import com.davidferrandiz.rickandmortycharacters.core.ui.theme.AppShapes
 import com.davidferrandiz.rickandmortycharacters.core.ui.theme.AppTheme
+import com.davidferrandiz.rickandmortycharacters.domain.model.CharacterStatus
 import com.davidferrandiz.rickandmortycharacters.domain.model.Gender
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun FiltersSheet(
+    appliedStatus: CharacterStatus?,
     appliedGender: Gender?,
-    onApply: (Gender?) -> Unit,
+    onApply: (CharacterStatus?, Gender?) -> Unit,
     onDismiss: () -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
+    var draftStatus by rememberSaveable { mutableStateOf(appliedStatus) }
     var draftGender by rememberSaveable { mutableStateOf(appliedGender) }
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -56,11 +59,16 @@ internal fun FiltersSheet(
         dragHandle = { SheetHandle() },
     ) {
         FiltersSheetContent(
+            draftStatus = draftStatus,
             draftGender = draftGender,
+            onStatusSelect = { draftStatus = it },
             onGenderSelect = { draftGender = it },
-            onReset = { draftGender = null },
+            onReset = {
+                draftStatus = null
+                draftGender = null
+            },
             onApply = {
-                scope.launch { sheetState.hide() }.invokeOnCompletion { onApply(draftGender) }
+                scope.launch { sheetState.hide() }.invokeOnCompletion { onApply(draftStatus, draftGender) }
             },
         )
     }
@@ -76,10 +84,11 @@ private fun SheetHandle() {
     )
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun FiltersSheetContent(
+    draftStatus: CharacterStatus?,
     draftGender: Gender?,
+    onStatusSelect: (CharacterStatus?) -> Unit,
     onGenderSelect: (Gender?) -> Unit,
     onReset: () -> Unit,
     onApply: () -> Unit,
@@ -108,34 +117,59 @@ internal fun FiltersSheetContent(
                 underlined = true,
             )
         }
-        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Text(
-                text = stringResource(R.string.filters_gender).uppercase(),
-                style = AppTheme.typography.eyebrow,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                AppChip(
-                    label = stringResource(R.string.filter_any),
-                    selected = draftGender == null,
-                    onClick = { onGenderSelect(null) },
-                )
-                Gender.entries.forEach { gender ->
-                    AppChip(
-                        label = stringResource(gender.labelRes),
-                        selected = draftGender == gender,
-                        onClick = { onGenderSelect(gender) },
-                    )
-                }
-            }
-        }
+        FilterGroup(
+            title = stringResource(R.string.filters_status),
+            options = CharacterStatus.entries,
+            selected = draftStatus,
+            label = { stringResource(it.labelRes) },
+            onSelect = onStatusSelect,
+        )
+        FilterGroup(
+            title = stringResource(R.string.filters_gender),
+            options = Gender.entries,
+            selected = draftGender,
+            label = { stringResource(it.labelRes) },
+            onSelect = onGenderSelect,
+        )
         PrimaryButton(
             text = stringResource(R.string.filters_apply),
             onClick = onApply,
             modifier = Modifier.fillMaxWidth(),
         )
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun <T> FilterGroup(
+    title: String,
+    options: List<T>,
+    selected: T?,
+    label: @Composable (T) -> String,
+    onSelect: (T?) -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Text(
+            text = title.uppercase(),
+            style = AppTheme.typography.eyebrow,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            AppChip(
+                label = stringResource(R.string.filter_any),
+                selected = selected == null,
+                onClick = { onSelect(null) },
+            )
+            options.forEach { option ->
+                AppChip(
+                    label = label(option),
+                    selected = selected == option,
+                    onClick = { onSelect(option) },
+                )
+            }
+        }
     }
 }

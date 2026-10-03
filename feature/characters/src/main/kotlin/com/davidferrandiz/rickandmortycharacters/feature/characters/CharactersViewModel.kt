@@ -73,13 +73,13 @@ class CharactersViewModel @Inject constructor(
         savedStateHandle[KEY_STATUS] = status
     }
 
-    fun onGenderApply(gender: Gender?) {
+    fun onFiltersApply(status: CharacterStatus?, gender: Gender?) {
+        savedStateHandle[KEY_STATUS] = status
         savedStateHandle[KEY_GENDER] = gender
     }
 
     fun onClearFilters() {
         onQueryChange("")
-        onStatusSelect(null)
-        onGenderApply(null)
+        onFiltersApply(status = null, gender = null)
     }
 }

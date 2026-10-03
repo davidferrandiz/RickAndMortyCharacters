@@ -58,7 +58,7 @@ class CharactersContentTest {
                     characters = flowOf(pagingData).collectAsLazyPagingItems(),
                     onQueryChange = {},
                     onStatusSelect = { selectedStatus = it },
-                    onGenderApply = {},
+                    onFiltersApply = { _, _ -> },
                     onClearFilters = { filtersCleared = true },
                     onCharacterClick = { characterId, _ -> clickedCharacterId = characterId },
                 )

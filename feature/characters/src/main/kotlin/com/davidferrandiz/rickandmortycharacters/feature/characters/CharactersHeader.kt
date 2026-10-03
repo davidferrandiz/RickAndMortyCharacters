@@ -67,7 +67,7 @@ internal fun CharactersHeader(
                 modifier = Modifier.weight(1f),
             )
             FilterButton(
-                activeFilters = if (uiState.gender == null) 0 else 1,
+                activeFilters = listOfNotNull(uiState.status, uiState.gender).size,
                 onClick = onOpenFilters,
             )
         }

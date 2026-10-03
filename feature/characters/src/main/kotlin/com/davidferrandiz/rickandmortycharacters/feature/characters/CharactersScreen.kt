@@ -62,7 +62,7 @@ fun CharactersScreen(
         characters = characters,
         onQueryChange = viewModel::onQueryChange,
         onStatusSelect = viewModel::onStatusSelect,
-        onGenderApply = viewModel::onGenderApply,
+        onFiltersApply = viewModel::onFiltersApply,
         onClearFilters = viewModel::onClearFilters,
         onCharacterClick = onCharacterClick,
         modifier = modifier,
@@ -76,7 +76,7 @@ internal fun CharactersContent(
     characters: LazyPagingItems<Character>,
     onQueryChange: (String) -> Unit,
     onStatusSelect: (CharacterStatus?) -> Unit,
-    onGenderApply: (Gender?) -> Unit,
+    onFiltersApply: (CharacterStatus?, Gender?) -> Unit,
     onClearFilters: () -> Unit,
     onCharacterClick: (characterId: Int, imageUrl: String) -> Unit,
     modifier: Modifier = Modifier,
@@ -131,9 +131,10 @@ internal fun CharactersContent(
     }
     if (showFilters) {
         FiltersSheet(
+            appliedStatus = uiState.status,
             appliedGender = uiState.gender,
-            onApply = { gender ->
-                onGenderApply(gender)
+            onApply = { status, gender ->
+                onFiltersApply(status, gender)
                 showFilters = false
             },
             onDismiss = { showFilters = false },

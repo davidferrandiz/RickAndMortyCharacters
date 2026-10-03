@@ -22,6 +22,7 @@
     <string name="load_more_error">Couldn’t load more characters</string>
     <string name="filters_title">Filters</string>
     <string name="filters_reset">Reset</string>
+    <string name="filters_status">Status</string>
     <string name="filters_gender">Gender</string>
     <string name="filter_any">Any</string>
     <string name="filters_apply">Apply filters</string>
