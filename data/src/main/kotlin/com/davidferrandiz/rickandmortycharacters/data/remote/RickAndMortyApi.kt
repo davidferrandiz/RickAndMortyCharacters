@@ -4,6 +4,7 @@ import com.davidferrandiz.rickandmortycharacters.data.remote.model.CharacterPage
 import com.davidferrandiz.rickandmortycharacters.data.remote.model.CharacterResponse
 import com.davidferrandiz.rickandmortycharacters.data.remote.model.EpisodeResponse
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -15,6 +16,7 @@ internal interface RickAndMortyApi {
         @Query("name") name: String? = null,
         @Query("status") status: String? = null,
         @Query("gender") gender: String? = null,
+        @Header("Cache-Control") cacheControl: String? = null,
     ): CharacterPageResponse
 
     @GET("character/{id}")

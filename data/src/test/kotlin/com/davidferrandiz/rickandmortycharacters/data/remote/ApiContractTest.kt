@@ -134,6 +134,23 @@ class ApiContractTest {
         assertEquals(first, second)
         assertEquals(1, server.requestCount)
     }
+
+    @Test
+    fun `asking to revalidate reaches the server even when the response is cached`() = runBlocking {
+        repeat(2) {
+            server.enqueue(
+                MockResponse.Builder()
+                    .addHeader("Cache-Control", "public, max-age=7776000, immutable")
+                    .body(CHARACTER_PAGE)
+                    .build(),
+            )
+        }
+
+        api.getCharacters(page = 1)
+        api.getCharacters(page = 1, cacheControl = "no-cache")
+
+        assertEquals(2, server.requestCount)
+    }
 }
 
 private const val CACHE_SIZE_BYTES = 1024L * 1024
