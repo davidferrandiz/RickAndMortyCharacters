@@ -79,24 +79,6 @@ The API returns 826 characters in fixed pages of 20, so the list is paginated wi
 
 **Room decides when to check with the server, and HTTP makes checking cheap.** The list is considered fresh for 24 hours. After that the refresh asks the server to revalidate, and a `304` with no body is the answer when nothing changed. If the request fails, Room keeps what it had and the list shows an offline bar.
 
-```mermaid
-sequenceDiagram
-    participant M as RemoteMediator
-    participant R as Room
-    participant H as HTTP cache
-    participant S as Server
-    M->>R: When was the list last refreshed?
-    alt Less than 24 hours ago
-        R-->>M: Fresh, no network needed
-    else More than 24 hours ago
-        M->>H: Page 1 with a no-cache header
-        H->>S: Conditional request
-        S-->>H: 304 if nothing changed, 200 otherwise
-        H-->>M: Page 1
-        M->>R: Replace the list in one transaction
-    end
-```
-
 ### The API rate limit
 
 The API allows about 40 requests every 10 seconds per IP and then answers `429` to everything, with a `Retry-After` header. Every card is one image request, so a fast scroll through new characters used to exhaust the budget: images stayed grey and pagination failed. I measured it with `curl` first; my first fix, more concurrency and preloading, made it worse and was removed.
@@ -108,13 +90,12 @@ The API allows about 40 requests every 10 seconds per IP and then answers `429` 
 
 ## Testing
 
-103 tests, 76 on the JVM and 27 instrumented, plus 26 screenshot comparisons. They are written where there is a decision and not where there is delegation, and they use fakes; there is no mocking library in the project.
+103 tests, 76 on the JVM and 27 instrumented, written where there is a decision and not where there is delegation. They use fakes; there is no mocking library in the project.
 
 - **Contract tests** against real API responses: parsing rules, the `404` that means "no results", HTTP caching and rate limiting.
 - **Data**: mappers, the search `PagingSource`, the rate limiter, and the `RemoteMediator` against a real in-memory Room.
 - **Presentation**: debounce and filter combination, state restored after process death, and the mapping from load states to screens.
 - **Compose UI**: empty, error and offline states, the filters draft, and the detail with its optional fields and episodes.
-- **Screenshots**: the design-system components and the states of both screens (loading, empty, error, offline bar, filters, detail) are rendered in light and dark with Compose Preview Screenshot Testing and compared with reference images kept in the repository, so a visual regression fails the build.
 
 ## Libraries
 
@@ -129,14 +110,6 @@ The API allows about 40 requests every 10 seconds per IP and then answers `429` 
 | Coil 3 | Image loading with memory and disk cache |
 
 Icons are vector drawables drawn for the app, and the shimmer and the collapsing header are a few lines of code each, to avoid dependencies for small things.
-
-## With more time
-
-- Retry automatically when connectivity comes back, instead of waiting for the user.
-- Cache search results so search works offline.
-- Convention plugins to remove the repeated Gradle configuration.
-- Static analysis and CI.
-- A baseline profile for startup and scroll performance.
 
 ## Credits
 
