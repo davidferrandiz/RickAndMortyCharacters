@@ -28,7 +28,7 @@ class ApiContractTest {
     @Before
     fun setUp() {
         server.start()
-        val client = NetworkModule.provideOkHttpClient(Cache(temporaryFolder.newFolder(), CACHE_SIZE_BYTES))
+        val client = NetworkModule.provideOkHttpClient(Cache(temporaryFolder.newFolder(), CACHE_SIZE_BYTES), ServerBackoff())
         val retrofit = NetworkModule.retrofit(server.url("/api/"), NetworkModule.provideJson(), client)
         api = NetworkModule.provideRickAndMortyApi(retrofit)
     }
@@ -174,15 +174,15 @@ class ApiContractTest {
     }
 
     @Test
-    fun `a rate limit that persists after one retry surfaces as an error`() = runBlocking {
-        repeat(2) {
+    fun `a rate limit that persists gives up after three attempts`() = runBlocking {
+        repeat(3) {
             server.enqueue(MockResponse.Builder().code(429).addHeader("Retry-After", "0").build())
         }
 
         val result = safeApiCall { api.getCharacters(page = 1) }
 
         assertEquals(AppResult.Error(AppError.Http(429)), result)
-        assertEquals(2, server.requestCount)
+        assertEquals(3, server.requestCount)
     }
 }
 

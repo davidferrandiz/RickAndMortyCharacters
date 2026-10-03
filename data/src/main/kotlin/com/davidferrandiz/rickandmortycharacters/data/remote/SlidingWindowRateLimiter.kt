@@ -1,4 +1,4 @@
-package com.davidferrandiz.rickandmortycharacters.image
+package com.davidferrandiz.rickandmortycharacters.data.remote
 
 internal class SlidingWindowRateLimiter(
     private val maxRequests: Int,

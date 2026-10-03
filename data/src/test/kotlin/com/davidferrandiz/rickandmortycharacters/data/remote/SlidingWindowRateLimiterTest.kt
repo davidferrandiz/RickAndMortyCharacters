@@ -1,4 +1,4 @@
-package com.davidferrandiz.rickandmortycharacters.image
+package com.davidferrandiz.rickandmortycharacters.data.remote
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
