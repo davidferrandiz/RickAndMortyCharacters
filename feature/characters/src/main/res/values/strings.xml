@@ -23,4 +23,14 @@
     <string name="offline_subtitle">Showing saved characters</string>
     <string name="loading_more">Loading more characters</string>
     <string name="load_more_error">Couldn’t load more characters</string>
+    <string name="filters_title">Filters</string>
+    <string name="filters_reset">Reset</string>
+    <string name="filters_gender">Gender</string>
+    <string name="filter_any">Any</string>
+    <string name="filters_apply">Apply filters</string>
+    <string name="filters_open">Open filters</string>
+    <plurals name="filters_open_active">
+        <item quantity="one">Open filters, %1$d active</item>
+        <item quantity="other">Open filters, %1$d active</item>
+    </plurals>
 </resources>

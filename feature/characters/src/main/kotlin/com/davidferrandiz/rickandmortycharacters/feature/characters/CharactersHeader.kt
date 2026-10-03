@@ -30,6 +30,7 @@ internal fun CharactersHeader(
     error: AppError?,
     onQueryChange: (String) -> Unit,
     onStatusSelect: (CharacterStatus?) -> Unit,
+    onOpenFilters: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -52,13 +53,22 @@ internal fun CharactersHeader(
                 color = MaterialTheme.colorScheme.onBackground,
             )
         }
-        SearchField(
-            query = query,
-            onQueryChange = onQueryChange,
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp),
-        )
+        ) {
+            SearchField(
+                query = query,
+                onQueryChange = onQueryChange,
+                modifier = Modifier.weight(1f),
+            )
+            FilterButton(
+                activeFilters = if (uiState.gender == null) 0 else 1,
+                onClick = onOpenFilters,
+            )
+        }
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier

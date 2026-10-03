@@ -18,6 +18,9 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
@@ -32,6 +35,7 @@ import androidx.paging.compose.itemKey
 import com.davidferrandiz.rickandmortycharacters.core.ui.component.CharacterCard
 import com.davidferrandiz.rickandmortycharacters.domain.model.Character
 import com.davidferrandiz.rickandmortycharacters.domain.model.CharacterStatus
+import com.davidferrandiz.rickandmortycharacters.domain.model.Gender
 
 internal val MIN_CARD_WIDTH = 160.dp
 internal val GRID_SPACING = 12.dp
@@ -53,6 +57,7 @@ fun CharactersScreen(
         characters = characters,
         onQueryChange = viewModel::onQueryChange,
         onStatusSelect = viewModel::onStatusSelect,
+        onGenderApply = viewModel::onGenderApply,
         onClearFilters = viewModel::onClearFilters,
         onCharacterClick = onCharacterClick,
         modifier = modifier,
@@ -66,10 +71,12 @@ internal fun CharactersContent(
     characters: LazyPagingItems<Character>,
     onQueryChange: (String) -> Unit,
     onStatusSelect: (CharacterStatus?) -> Unit,
+    onGenderApply: (Gender?) -> Unit,
     onClearFilters: () -> Unit,
     onCharacterClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var showFilters by rememberSaveable { mutableStateOf(false) }
     val listState = charactersListState(
         refresh = characters.loadState.refresh,
         append = characters.loadState.append,
@@ -89,6 +96,7 @@ internal fun CharactersContent(
             error = (listState as? CharactersListState.Error)?.error,
             onQueryChange = onQueryChange,
             onStatusSelect = onStatusSelect,
+            onOpenFilters = { showFilters = true },
         )
         Box(modifier = Modifier.weight(1f)) {
             when (listState) {
@@ -124,6 +132,16 @@ internal fun CharactersContent(
                 }
             }
         }
+    }
+    if (showFilters) {
+        FiltersSheet(
+            appliedGender = uiState.gender,
+            onApply = { gender ->
+                onGenderApply(gender)
+                showFilters = false
+            },
+            onDismiss = { showFilters = false },
+        )
     }
 }
 
