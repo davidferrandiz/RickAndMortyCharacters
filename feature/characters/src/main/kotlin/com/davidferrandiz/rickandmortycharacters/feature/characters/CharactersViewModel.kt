@@ -12,7 +12,8 @@ import com.davidferrandiz.rickandmortycharacters.domain.model.Character
 import com.davidferrandiz.rickandmortycharacters.domain.model.CharacterFilter
 import com.davidferrandiz.rickandmortycharacters.domain.model.CharacterStatus
 import com.davidferrandiz.rickandmortycharacters.domain.model.Gender
-import com.davidferrandiz.rickandmortycharacters.domain.repository.CharacterRepository
+import com.davidferrandiz.rickandmortycharacters.domain.usecase.ObserveCharacterCountUseCase
+import com.davidferrandiz.rickandmortycharacters.domain.usecase.ObserveCharactersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -35,7 +36,8 @@ private const val STATE_TIMEOUT_MILLIS = 5_000L
 @HiltViewModel
 class CharactersViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    repository: CharacterRepository,
+    observeCharacters: ObserveCharactersUseCase,
+    observeCharacterCount: ObserveCharacterCountUseCase,
 ) : ViewModel() {
 
     var query: String by mutableStateOf(savedStateHandle[KEY_QUERY] ?: "")
@@ -46,7 +48,7 @@ class CharactersViewModel @Inject constructor(
     private val gender = savedStateHandle.getStateFlow<Gender?>(KEY_GENDER, null)
 
     val uiState: StateFlow<CharactersUiState> =
-        combine(status, gender, repository.observeCharacterCount(), ::CharactersUiState)
+        combine(status, gender, observeCharacterCount(), ::CharactersUiState)
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(STATE_TIMEOUT_MILLIS),
@@ -61,7 +63,7 @@ class CharactersViewModel @Inject constructor(
             gender,
         ) { text, status, gender -> CharacterFilter(name = text.trim(), status = status, gender = gender) }
             .distinctUntilChanged()
-            .flatMapLatest(repository::observeCharacters)
+            .flatMapLatest { filter -> observeCharacters(filter) }
             .cachedIn(viewModelScope)
 
     fun onQueryChange(text: String) {

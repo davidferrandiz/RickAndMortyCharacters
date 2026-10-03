@@ -8,6 +8,8 @@ import com.davidferrandiz.rickandmortycharacters.domain.model.CharacterFilter
 import com.davidferrandiz.rickandmortycharacters.domain.model.CharacterStatus
 import com.davidferrandiz.rickandmortycharacters.domain.model.Gender
 import com.davidferrandiz.rickandmortycharacters.domain.repository.CharacterRepository
+import com.davidferrandiz.rickandmortycharacters.domain.usecase.ObserveCharacterCountUseCase
+import com.davidferrandiz.rickandmortycharacters.domain.usecase.ObserveCharactersUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,7 +35,11 @@ class CharactersViewModelTest {
     private fun TestScope.observedViewModel(
         savedStateHandle: SavedStateHandle = SavedStateHandle(),
     ): CharactersViewModel {
-        val viewModel = CharactersViewModel(savedStateHandle, repository)
+        val viewModel = CharactersViewModel(
+            savedStateHandle = savedStateHandle,
+            observeCharacters = ObserveCharactersUseCase(repository),
+            observeCharacterCount = ObserveCharacterCountUseCase(repository),
+        )
         backgroundScope.launch { viewModel.characters.collect() }
         backgroundScope.launch { viewModel.uiState.collect() }
         return viewModel
