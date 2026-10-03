@@ -18,6 +18,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +32,8 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -48,6 +51,7 @@ fun SearchField(
     var isFocused by remember { mutableStateOf(false) }
     val isActive = isFocused || query.isNotEmpty()
     val colors = MaterialTheme.colorScheme
+    val label = stringResource(R.string.search_label)
     BasicTextField(
         value = query,
         onValueChange = onQueryChange,
@@ -57,7 +61,8 @@ fun SearchField(
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         modifier = modifier
             .height(52.dp)
-            .onFocusChanged { isFocused = it.isFocused },
+            .onFocusChanged { isFocused = it.isFocused }
+            .semantics { contentDescription = label },
         decorationBox = { textField ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -97,6 +102,7 @@ fun SearchField(
                     Box(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier
+                            .minimumInteractiveComponentSize()
                             .size(44.dp)
                             .clip(CircleShape)
                             .clickable(

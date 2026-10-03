@@ -14,12 +14,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -100,11 +104,12 @@ internal fun CharacterDetailContent(
                 onRetry = onRetry,
             )
         }
+        StatusBarScrim()
         BackButton(
             onClick = onBack,
             modifier = Modifier
                 .statusBarsPadding()
-                .padding(start = 16.dp, top = 8.dp),
+                .padding(start = 14.dp, top = 6.dp),
         )
     }
 }
@@ -191,10 +196,22 @@ private fun DetailError(error: AppError, onRetry: () -> Unit, modifier: Modifier
 }
 
 @Composable
+private fun StatusBarScrim() {
+    val background = MaterialTheme.colorScheme.background
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .windowInsetsTopHeight(WindowInsets.statusBars)
+            .background(Brush.verticalGradient(listOf(background.copy(alpha = 0.7f), background.copy(alpha = 0f)))),
+    )
+}
+
+@Composable
 private fun BackButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
+            .minimumInteractiveComponentSize()
             .size(44.dp)
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.surface)

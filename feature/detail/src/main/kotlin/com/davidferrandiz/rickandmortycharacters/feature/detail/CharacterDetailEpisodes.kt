@@ -33,6 +33,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.davidferrandiz.rickandmortycharacters.core.ui.component.TextAction
 import com.davidferrandiz.rickandmortycharacters.core.ui.component.rememberShimmerProgress
@@ -70,6 +72,7 @@ internal fun DetailEpisodes(
                 text = stringResource(R.string.detail_episodes),
                 style = AppTheme.typography.sectionTitle,
                 color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.semantics { heading() },
             )
             Text(
                 text = pluralStringResource(R.plurals.detail_episode_count, episodeCount, episodeCount),

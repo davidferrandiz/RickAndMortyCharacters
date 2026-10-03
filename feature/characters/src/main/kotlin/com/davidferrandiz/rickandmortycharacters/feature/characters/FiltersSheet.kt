@@ -25,6 +25,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.davidferrandiz.rickandmortycharacters.core.ui.component.AppChip
 import com.davidferrandiz.rickandmortycharacters.core.ui.component.PrimaryButton
@@ -98,6 +100,7 @@ internal fun FiltersSheetContent(
                 text = stringResource(R.string.filters_title),
                 style = AppTheme.typography.title,
                 color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.semantics { heading() },
             )
             TextAction(
                 text = stringResource(R.string.filters_reset),

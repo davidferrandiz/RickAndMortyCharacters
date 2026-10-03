@@ -9,6 +9,7 @@
     <string name="unknown">Unknown</string>
     <string name="character_code">#%1$03d</string>
     <string name="character_meta">%1$s · %2$s</string>
+    <string name="search_label">Search characters by name</string>
     <string name="search_placeholder">Search by name</string>
     <string name="search_clear">Clear search</string>
     <string name="action_retry">Retry</string>

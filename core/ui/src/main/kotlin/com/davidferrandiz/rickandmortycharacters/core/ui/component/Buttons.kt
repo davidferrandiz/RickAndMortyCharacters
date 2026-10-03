@@ -2,7 +2,7 @@ package com.davidferrandiz.rickandmortycharacters.core.ui.component
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -31,7 +31,7 @@ fun PrimaryButton(
             contentColor = MaterialTheme.colorScheme.onPrimary,
         ),
         contentPadding = PaddingValues(horizontal = 32.dp),
-        modifier = modifier.height(56.dp),
+        modifier = modifier.heightIn(min = 56.dp),
     ) {
         Text(text = text, style = AppTheme.typography.button)
     }
@@ -49,7 +49,7 @@ fun SecondaryButton(
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface),
         colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
         contentPadding = PaddingValues(horizontal = 22.dp),
-        modifier = modifier.height(48.dp),
+        modifier = modifier.heightIn(min = 48.dp),
     ) {
         Text(text = text, style = AppTheme.typography.buttonSmall)
     }
@@ -68,7 +68,7 @@ fun TextAction(
         shape = AppShapes.Pill,
         colors = ButtonDefaults.textButtonColors(contentColor = color),
         contentPadding = PaddingValues(horizontal = 12.dp),
-        modifier = modifier.height(44.dp),
+        modifier = modifier.heightIn(min = 44.dp),
     ) {
         Text(
             text = text,

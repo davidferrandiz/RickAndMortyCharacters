@@ -13,6 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.davidferrandiz.rickandmortycharacters.core.ui.component.AppChip
 import com.davidferrandiz.rickandmortycharacters.core.ui.component.SearchField
@@ -50,6 +52,7 @@ internal fun CharactersHeader(
                 text = stringResource(R.string.characters_title),
                 style = AppTheme.typography.screenTitle,
                 color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.semantics { heading() },
             )
         }
         Row(
