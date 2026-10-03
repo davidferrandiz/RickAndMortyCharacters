@@ -3,10 +3,10 @@ package com.davidferrandiz.rickandmortycharacters.data.paging
 import androidx.paging.PagingConfig
 import androidx.paging.PagingSource.LoadResult
 import androidx.paging.testing.TestPager
-import com.davidferrandiz.rickandmortycharacters.data.remote.RickAndMortyApi
+import com.davidferrandiz.rickandmortycharacters.data.remote.CharactersRequest
+import com.davidferrandiz.rickandmortycharacters.data.remote.FakeRickAndMortyApi
 import com.davidferrandiz.rickandmortycharacters.data.remote.model.CharacterPageResponse
 import com.davidferrandiz.rickandmortycharacters.data.remote.model.CharacterResponse
-import com.davidferrandiz.rickandmortycharacters.data.remote.model.EpisodeResponse
 import com.davidferrandiz.rickandmortycharacters.data.remote.model.PageInfoResponse
 import com.davidferrandiz.rickandmortycharacters.domain.error.AppError
 import com.davidferrandiz.rickandmortycharacters.domain.error.AppErrorException
@@ -92,7 +92,7 @@ class CharacterSearchPagingSourceTest {
 
         pager(filter).refresh()
 
-        assertEquals(Request(page = 1, name = "Morty", status = "unknown", gender = "genderless"), api.requests.single())
+        assertEquals(CharactersRequest(page = 1, name = "Morty", status = "unknown", gender = "genderless"), api.requests.single())
     }
 
     @Test
@@ -101,30 +101,8 @@ class CharacterSearchPagingSourceTest {
 
         pager(CharacterFilter(name = "   ", status = CharacterStatus.Dead)).refresh()
 
-        assertEquals(Request(page = 1, name = null, status = "dead", gender = null), api.requests.single())
+        assertEquals(CharactersRequest(page = 1, name = null, status = "dead", gender = null), api.requests.single())
     }
-}
-
-private data class Request(val page: Int, val name: String?, val status: String?, val gender: String?)
-
-private class FakeRickAndMortyApi : RickAndMortyApi {
-    val pages = mutableMapOf<Int, () -> CharacterPageResponse>()
-    val requests = mutableListOf<Request>()
-
-    override suspend fun getCharacters(
-        page: Int,
-        name: String?,
-        status: String?,
-        gender: String?,
-        cacheControl: String?,
-    ): CharacterPageResponse {
-        requests += Request(page, name, status, gender)
-        return pages.getValue(page).invoke()
-    }
-
-    override suspend fun getCharacter(id: Int): CharacterResponse = error("not used")
-
-    override suspend fun getEpisodes(ids: String): List<EpisodeResponse> = error("not used")
 }
 
 private fun page(ids: List<Int>, next: String?) = CharacterPageResponse(
