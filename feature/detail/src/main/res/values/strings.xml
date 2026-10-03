@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="detail_back">Back to characters</string>
+    <string name="detail_species">Species</string>
+    <string name="detail_gender">Gender</string>
+    <string name="detail_type">Type</string>
+    <string name="detail_origin">Origin</string>
+    <string name="detail_location">Last known location</string>
+    <string name="detail_error_title">Couldn’t load this character</string>
+</resources>

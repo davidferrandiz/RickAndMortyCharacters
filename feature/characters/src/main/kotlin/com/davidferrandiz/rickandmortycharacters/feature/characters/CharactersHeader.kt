@@ -21,7 +21,6 @@ import com.davidferrandiz.rickandmortycharacters.core.ui.theme.AppTheme
 import com.davidferrandiz.rickandmortycharacters.domain.error.AppError
 import com.davidferrandiz.rickandmortycharacters.domain.model.CharacterStatus
 import com.davidferrandiz.rickandmortycharacters.domain.model.Gender
-import com.davidferrandiz.rickandmortycharacters.core.ui.R as CoreUiR
 
 @Composable
 internal fun CharactersHeader(
@@ -111,14 +110,6 @@ private val CharacterStatus.summaryRes: Int
     get() = when (this) {
         CharacterStatus.Unknown -> R.string.summary_status_unknown
         else -> labelRes
-    }
-
-internal val Gender.labelRes: Int
-    get() = when (this) {
-        Gender.Female -> R.string.gender_female
-        Gender.Male -> R.string.gender_male
-        Gender.Genderless -> R.string.gender_genderless
-        Gender.Unknown -> CoreUiR.string.status_unknown
     }
 
 private val Gender.summaryRes: Int

@@ -74,7 +74,14 @@ class CharacterMapperTest {
         val character = response.toDomain()
 
         assertEquals("https://rickandmortyapi.com/api/character/avatar/2.jpeg", character.imageUrl)
-        assertEquals("unknown", character.origin)
         assertEquals("Citadel of Ricks", character.location)
+    }
+
+    @Test
+    fun `an unknown or missing place becomes null whatever the casing`() {
+        assertNull(response.copy(origin = PlaceResponse(name = "unknown")).toDomain().origin)
+        assertNull(response.copy(origin = PlaceResponse(name = "Unknown")).toDomain().origin)
+        assertNull(response.copy(location = PlaceResponse(name = "")).toDomain().location)
+        assertEquals("Earth (C-137)", response.copy(origin = PlaceResponse(name = "Earth (C-137)")).toDomain().origin)
     }
 }

@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.davidferrandiz.rickandmortycharacters.core.ui.component.AppChip
 import com.davidferrandiz.rickandmortycharacters.core.ui.component.PrimaryButton
 import com.davidferrandiz.rickandmortycharacters.core.ui.component.TextAction
+import com.davidferrandiz.rickandmortycharacters.core.ui.component.labelRes
 import com.davidferrandiz.rickandmortycharacters.core.ui.theme.AppShapes
 import com.davidferrandiz.rickandmortycharacters.core.ui.theme.AppTheme
 import com.davidferrandiz.rickandmortycharacters.domain.model.Gender

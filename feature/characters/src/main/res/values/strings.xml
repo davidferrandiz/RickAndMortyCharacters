@@ -10,9 +10,6 @@
     <string name="summary_query">“%1$s”</string>
     <string name="summary_separator">" · "</string>
     <string name="summary_status_unknown">Status unknown</string>
-    <string name="gender_female">Female</string>
-    <string name="gender_male">Male</string>
-    <string name="gender_genderless">Genderless</string>
     <string name="summary_gender_unknown">Gender unknown</string>
     <string name="empty_title_query">No characters named “%1$s”</string>
     <string name="empty_title">No characters found</string>

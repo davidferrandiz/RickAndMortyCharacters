@@ -13,8 +13,8 @@ internal fun CharacterResponse.toEntity(): CharacterEntity = CharacterEntity(
     species = species,
     type = type.ifBlank { null },
     gender = gender.toGender(),
-    origin = origin.name,
-    location = location.name,
+    origin = origin.name.toPlaceName(),
+    location = location.name.toPlaceName(),
     imageUrl = image,
     episodeIds = episode.mapNotNull(String::toEpisodeId),
 )
@@ -46,5 +46,10 @@ private fun String.toGender(): Gender = when (lowercase()) {
     "genderless" -> Gender.Genderless
     else -> Gender.Unknown
 }
+
+private const val UNKNOWN_PLACE = "unknown"
+
+private fun String.toPlaceName(): String? =
+    takeUnless { it.isBlank() || it.equals(UNKNOWN_PLACE, ignoreCase = true) }
 
 private fun String.toEpisodeId(): Int? = substringAfterLast('/').toIntOrNull()

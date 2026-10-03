@@ -7,8 +7,8 @@ data class Character(
     val species: String,
     val type: String?,
     val gender: Gender,
-    val origin: String,
-    val location: String,
+    val origin: String?,
+    val location: String?,
     val imageUrl: String,
     val episodeIds: List<Int>,
 )
