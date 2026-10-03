@@ -108,13 +108,13 @@ The API allows about 40 requests every 10 seconds per IP and then answers `429` 
 
 ## Testing
 
-103 tests, 76 on the JVM and 27 instrumented, written where there is a decision and not where there is delegation. They use fakes; there is no mocking library in the project.
+103 tests, 76 on the JVM and 27 instrumented, plus 10 screenshot comparisons. They are written where there is a decision and not where there is delegation, and they use fakes; there is no mocking library in the project.
 
 - **Contract tests** against real API responses: parsing rules, the `404` that means "no results", HTTP caching and rate limiting.
 - **Data**: mappers, the search `PagingSource`, the rate limiter, and the `RemoteMediator` against a real in-memory Room.
 - **Presentation**: debounce and filter combination, state restored after process death, and the mapping from load states to screens.
 - **Compose UI**: empty, error and offline states, the filters draft, and the detail with its optional fields and episodes.
-- **Screenshots**: the design-system components are rendered in light and dark and compared with reference images, so a visual regression fails the build.
+- **Screenshots**: the design-system components (card, chips, search field, buttons and the state message) are rendered in light and dark with Compose Preview Screenshot Testing and compared with reference images kept in the repository, so a visual regression fails the build.
 
 ## Libraries
 
