@@ -13,6 +13,12 @@ android {
 
     defaultConfig {
         minSdk = 26
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    sourceSets {
+        named("test") { kotlin.srcDir("src/sharedTest/kotlin") }
+        named("androidTest") { kotlin.srcDir("src/sharedTest/kotlin") }
     }
 
     compileOptions {
@@ -44,4 +50,8 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.okhttp.mockwebserver)
     testImplementation(libs.androidx.paging.testing)
+
+    androidTestImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.test.runner)
 }

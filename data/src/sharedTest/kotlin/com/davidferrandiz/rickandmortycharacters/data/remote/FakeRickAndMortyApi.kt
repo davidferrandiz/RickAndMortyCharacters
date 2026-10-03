@@ -9,6 +9,7 @@ internal data class CharactersRequest(
     val name: String?,
     val status: String?,
     val gender: String?,
+    val cacheControl: String? = null,
 )
 
 internal class FakeRickAndMortyApi : RickAndMortyApi {
@@ -28,7 +29,7 @@ internal class FakeRickAndMortyApi : RickAndMortyApi {
         gender: String?,
         cacheControl: String?,
     ): CharacterPageResponse {
-        requests += CharactersRequest(page, name, status, gender)
+        requests += CharactersRequest(page, name, status, gender, cacheControl)
         return pages.getValue(page).invoke()
     }
 
