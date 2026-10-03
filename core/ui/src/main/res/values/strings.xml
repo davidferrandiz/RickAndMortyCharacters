@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="status_alive">Alive</string>
+    <string name="status_dead">Dead</string>
+    <string name="status_unknown">Unknown</string>
+    <string name="character_code">#%1$03d</string>
+    <string name="character_meta">%1$s · %2$s</string>
+    <string name="search_placeholder">Search by name</string>
+    <string name="search_clear">Clear search</string>
+</resources>
