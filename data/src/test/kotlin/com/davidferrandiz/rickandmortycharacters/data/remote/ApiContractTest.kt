@@ -151,6 +151,39 @@ class ApiContractTest {
 
         assertEquals(2, server.requestCount)
     }
+
+    @Test
+    fun `a rate limited request waits what the server asks and then succeeds`() = runBlocking {
+        server.enqueue(MockResponse.Builder().code(429).addHeader("Retry-After", "0").build())
+        server.enqueue(MockResponse(body = CHARACTER_PAGE))
+
+        val result = safeApiCall { api.getCharacters(page = 1) }
+
+        assertTrue(result is AppResult.Success)
+        assertEquals(2, server.requestCount)
+    }
+
+    @Test
+    fun `a rate limit that asks to wait too long surfaces as an error straight away`() = runBlocking {
+        server.enqueue(MockResponse.Builder().code(429).addHeader("Retry-After", "120").build())
+
+        val result = safeApiCall { api.getCharacters(page = 1) }
+
+        assertEquals(AppResult.Error(AppError.Http(429)), result)
+        assertEquals(1, server.requestCount)
+    }
+
+    @Test
+    fun `a rate limit that persists after one retry surfaces as an error`() = runBlocking {
+        repeat(2) {
+            server.enqueue(MockResponse.Builder().code(429).addHeader("Retry-After", "0").build())
+        }
+
+        val result = safeApiCall { api.getCharacters(page = 1) }
+
+        assertEquals(AppResult.Error(AppError.Http(429)), result)
+        assertEquals(2, server.requestCount)
+    }
 }
 
 private const val CACHE_SIZE_BYTES = 1024L * 1024

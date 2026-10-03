@@ -1,6 +1,7 @@
 package com.davidferrandiz.rickandmortycharacters.data.di
 
 import android.content.Context
+import com.davidferrandiz.rickandmortycharacters.data.remote.RetryAfterInterceptor
 import com.davidferrandiz.rickandmortycharacters.data.remote.RickAndMortyApi
 import dagger.Module
 import dagger.Provides
@@ -42,6 +43,7 @@ internal object NetworkModule {
     @Singleton
     fun provideOkHttpClient(cache: Cache): OkHttpClient = OkHttpClient.Builder()
         .cache(cache)
+        .addInterceptor(RetryAfterInterceptor())
         .build()
 
     @Provides
