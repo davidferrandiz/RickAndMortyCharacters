@@ -7,4 +7,16 @@
     <string name="character_meta">%1$s · %2$s</string>
     <string name="search_placeholder">Search by name</string>
     <string name="search_clear">Clear search</string>
+    <string name="action_retry">Retry</string>
+    <string name="action_try_again">Try again</string>
+    <string name="error_label_no_connection">No connection</string>
+    <string name="error_label_timeout">Connection timed out</string>
+    <string name="error_label_too_many_requests">Too many requests</string>
+    <string name="error_label_server">Server error</string>
+    <string name="error_label_generic">Something went wrong</string>
+    <string name="error_message_no_connection">Check your connection and try again. Characters you’ve already seen stay available offline.</string>
+    <string name="error_message_timeout">The server took too long to answer. Try again in a moment.</string>
+    <string name="error_message_too_many_requests">The API is limiting requests right now. Wait a moment and try again.</string>
+    <string name="error_message_server">The server couldn’t answer this request. Try again in a moment.</string>
+    <string name="error_message_generic">This wasn’t supposed to happen. Try again.</string>
 </resources>

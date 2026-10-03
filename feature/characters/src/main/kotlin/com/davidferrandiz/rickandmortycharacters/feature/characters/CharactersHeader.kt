@@ -18,6 +18,7 @@ import com.davidferrandiz.rickandmortycharacters.core.ui.component.AppChip
 import com.davidferrandiz.rickandmortycharacters.core.ui.component.SearchField
 import com.davidferrandiz.rickandmortycharacters.core.ui.component.labelRes
 import com.davidferrandiz.rickandmortycharacters.core.ui.theme.AppTheme
+import com.davidferrandiz.rickandmortycharacters.domain.error.AppError
 import com.davidferrandiz.rickandmortycharacters.domain.model.CharacterStatus
 import com.davidferrandiz.rickandmortycharacters.domain.model.Gender
 import com.davidferrandiz.rickandmortycharacters.core.ui.R as CoreUiR
@@ -26,6 +27,7 @@ import com.davidferrandiz.rickandmortycharacters.core.ui.R as CoreUiR
 internal fun CharactersHeader(
     query: String,
     uiState: CharactersUiState,
+    error: AppError?,
     onQueryChange: (String) -> Unit,
     onStatusSelect: (CharacterStatus?) -> Unit,
     modifier: Modifier = Modifier,
@@ -39,7 +41,7 @@ internal fun CharactersHeader(
             modifier = Modifier.padding(horizontal = 20.dp),
         ) {
             Text(
-                text = eyebrow(query, uiState).uppercase(),
+                text = eyebrow(query, uiState, error).uppercase(),
                 style = AppTheme.typography.eyebrow,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
@@ -80,7 +82,7 @@ internal fun CharactersHeader(
 }
 
 @Composable
-private fun eyebrow(query: String, uiState: CharactersUiState): String {
+private fun eyebrow(query: String, uiState: CharactersUiState, error: AppError?): String {
     val active = buildList {
         if (query.isNotBlank()) add(stringResource(R.string.summary_query, query.trim()))
         uiState.status?.let { add(stringResource(it.summaryRes)) }
@@ -89,6 +91,7 @@ private fun eyebrow(query: String, uiState: CharactersUiState): String {
     val totalCount = uiState.totalCount
     return when {
         active.isNotEmpty() -> active.joinToString(stringResource(R.string.summary_separator))
+        error != null -> stringResource(error.labelRes)
         totalCount != null -> pluralStringResource(R.plurals.characters_count, totalCount, totalCount)
         else -> stringResource(R.string.characters_loading)
     }

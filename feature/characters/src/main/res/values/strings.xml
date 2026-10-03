@@ -14,4 +14,13 @@
     <string name="gender_male">Male</string>
     <string name="gender_genderless">Genderless</string>
     <string name="summary_gender_unknown">Gender unknown</string>
+    <string name="empty_title_query">No characters named “%1$s”</string>
+    <string name="empty_title">No characters found</string>
+    <string name="empty_body_query">Check the spelling or try another name. Not in this dimension, at least.</string>
+    <string name="empty_body">Try removing a filter.</string>
+    <string name="action_clear_filters">Clear search and filters</string>
+    <string name="error_title">Couldn’t load characters</string>
+    <string name="offline_subtitle">Showing saved characters</string>
+    <string name="loading_more">Loading more characters</string>
+    <string name="load_more_error">Couldn’t load more characters</string>
 </resources>
