@@ -7,4 +7,16 @@
     <string name="detail_origin">Origin</string>
     <string name="detail_location">Last known location</string>
     <string name="detail_error_title">Couldn’t load this character</string>
+    <string name="detail_episodes">Episodes</string>
+    <plurals name="detail_episode_count">
+        <item quantity="one">%1$d episode</item>
+        <item quantity="other">%1$d episodes</item>
+    </plurals>
+    <plurals name="detail_see_all_episodes">
+        <item quantity="one">See all %1$d episode</item>
+        <item quantity="other">See all %1$d episodes</item>
+    </plurals>
+    <string name="detail_show_less">Show less</string>
+    <string name="detail_episodes_loading">Loading episodes</string>
+    <string name="detail_episodes_error">Couldn’t load the episodes</string>
 </resources>
