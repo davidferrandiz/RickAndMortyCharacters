@@ -90,7 +90,7 @@ The API allows about 40 requests every 10 seconds per IP and then answers `429` 
 
 ## Testing
 
-108 tests, 81 on the JVM and 27 instrumented, written where there is a decision and not where there is delegation. They use fakes; there is no mocking library in the project.
+108 tests, 81 on the JVM and 27 instrumented, plus 26 screenshot comparisons. They are written where there is a decision and not where there is delegation. They use fakes; there is no mocking library in the project.
 
 - **Contract tests** against real API responses: parsing rules, the `404` that means "no results", HTTP caching and rate limiting.
 - **Data**: mappers, the search `PagingSource`, the rate limiter, and the `RemoteMediator` against a real in-memory Room.
