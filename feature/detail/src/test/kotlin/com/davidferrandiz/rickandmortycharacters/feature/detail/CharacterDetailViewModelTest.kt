@@ -7,6 +7,7 @@ import com.davidferrandiz.rickandmortycharacters.domain.model.Character
 import com.davidferrandiz.rickandmortycharacters.domain.model.CharacterFilter
 import com.davidferrandiz.rickandmortycharacters.domain.model.CharacterStatus
 import com.davidferrandiz.rickandmortycharacters.domain.model.Episode
+import com.davidferrandiz.rickandmortycharacters.domain.model.EpisodesState
 import com.davidferrandiz.rickandmortycharacters.domain.model.Gender
 import com.davidferrandiz.rickandmortycharacters.domain.repository.CharacterRepository
 import com.davidferrandiz.rickandmortycharacters.domain.repository.EpisodeRepository
@@ -62,7 +63,7 @@ class CharacterDetailViewModelTest {
 
         assertEquals(CharacterDetailUiState.Loading, states.first())
         assertEquals(
-            CharacterDetailUiState.Content(rick, EpisodesUiState.Content(listOf(pilot))),
+            CharacterDetailUiState.Content(rick, EpisodesState.Loaded(listOf(pilot))),
             states.last(),
         )
     }
@@ -85,7 +86,7 @@ class CharacterDetailViewModelTest {
         runCurrent()
 
         assertEquals(
-            CharacterDetailUiState.Content(rick, EpisodesUiState.Error(AppError.Timeout)),
+            CharacterDetailUiState.Content(rick, EpisodesState.Failed(AppError.Timeout)),
             states.last(),
         )
     }
@@ -102,7 +103,7 @@ class CharacterDetailViewModelTest {
 
         assertEquals(2, characters.calls)
         assertEquals(
-            CharacterDetailUiState.Content(rick, EpisodesUiState.Content(listOf(pilot))),
+            CharacterDetailUiState.Content(rick, EpisodesState.Loaded(listOf(pilot))),
             states.last(),
         )
     }

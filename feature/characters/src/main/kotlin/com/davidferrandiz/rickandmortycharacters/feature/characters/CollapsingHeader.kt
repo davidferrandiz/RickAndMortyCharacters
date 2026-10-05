@@ -2,6 +2,8 @@ package com.davidferrandiz.rickandmortycharacters.feature.characters
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.MaterialTheme
@@ -21,12 +23,32 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
 
+private val COMPACT_HEIGHT = 480.dp
+
 @Composable
-internal fun CollapsingHeader(
+internal fun HeaderLayout(
     header: @Composable (Modifier) -> Unit,
     modifier: Modifier = Modifier,
+    content: @Composable (topPadding: Dp, Modifier) -> Unit,
+) {
+    BoxWithConstraints(modifier = modifier) {
+        if (maxHeight < COMPACT_HEIGHT) {
+            CollapsingHeader(header = header) { headerHeight -> content(headerHeight, Modifier.fillMaxSize()) }
+        } else {
+            Column {
+                header(Modifier)
+                content(0.dp, Modifier.weight(1f))
+            }
+        }
+    }
+}
+
+@Composable
+private fun CollapsingHeader(
+    header: @Composable (Modifier) -> Unit,
     content: @Composable (headerHeight: Dp) -> Unit,
 ) {
     var headerHeightPx by remember { mutableIntStateOf(0) }
@@ -40,7 +62,7 @@ internal fun CollapsingHeader(
         }
     }
     Box(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .clipToBounds()
             .nestedScroll(scrollConnection),

@@ -8,6 +8,7 @@ import com.davidferrandiz.rickandmortycharacters.domain.model.CharacterDetail
 import com.davidferrandiz.rickandmortycharacters.domain.model.CharacterFilter
 import com.davidferrandiz.rickandmortycharacters.domain.model.CharacterStatus
 import com.davidferrandiz.rickandmortycharacters.domain.model.Episode
+import com.davidferrandiz.rickandmortycharacters.domain.model.EpisodesState
 import com.davidferrandiz.rickandmortycharacters.domain.model.Gender
 import com.davidferrandiz.rickandmortycharacters.domain.repository.CharacterRepository
 import com.davidferrandiz.rickandmortycharacters.domain.repository.EpisodeRepository
@@ -59,8 +60,8 @@ class GetCharacterDetailUseCaseTest {
 
         assertEquals(
             listOf(
-                AppResult.Success(CharacterDetail(rick, episodes = null)),
-                AppResult.Success(CharacterDetail(rick, episodes = AppResult.Success(listOf(pilot)))),
+                AppResult.Success(CharacterDetail(rick, episodes = EpisodesState.Loading)),
+                AppResult.Success(CharacterDetail(rick, episodes = EpisodesState.Loaded(listOf(pilot)))),
             ),
             emissions,
         )
@@ -76,7 +77,7 @@ class GetCharacterDetailUseCaseTest {
         val last = useCase(1).toList().last()
 
         assertEquals(
-            AppResult.Success(CharacterDetail(rick, episodes = AppResult.Error(AppError.Timeout))),
+            AppResult.Success(CharacterDetail(rick, episodes = EpisodesState.Failed(AppError.Timeout))),
             last,
         )
     }
@@ -93,7 +94,7 @@ class GetCharacterDetailUseCaseTest {
         val last = useCase(1).toList().last()
 
         assertEquals(
-            AppResult.Success(CharacterDetail(withoutEpisodes, episodes = AppResult.Success(emptyList()))),
+            AppResult.Success(CharacterDetail(withoutEpisodes, episodes = EpisodesState.Loaded(emptyList()))),
             last,
         )
         assertEquals(0, episodes.calls)

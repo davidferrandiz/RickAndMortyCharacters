@@ -9,6 +9,7 @@ import com.davidferrandiz.rickandmortycharacters.domain.error.AppError
 import com.davidferrandiz.rickandmortycharacters.domain.model.Character
 import com.davidferrandiz.rickandmortycharacters.domain.model.CharacterStatus
 import com.davidferrandiz.rickandmortycharacters.domain.model.Episode
+import com.davidferrandiz.rickandmortycharacters.domain.model.EpisodesState
 import com.davidferrandiz.rickandmortycharacters.domain.model.Gender
 
 @Preview(name = "Light", widthDp = 390, heightDp = 1000)
@@ -53,14 +54,14 @@ private fun Screen(uiState: CharacterDetailUiState) {
 @ScreenPreviews
 @Composable
 fun CharacterDetail() {
-    Screen(CharacterDetailUiState.Content(abradolf, EpisodesUiState.Content(episodes)))
+    Screen(CharacterDetailUiState.Content(abradolf, EpisodesState.Loaded(episodes)))
 }
 
 @PreviewTest
 @ScreenPreviews
 @Composable
 fun CharacterDetailEpisodesError() {
-    Screen(CharacterDetailUiState.Content(abradolf, EpisodesUiState.Error(AppError.Timeout)))
+    Screen(CharacterDetailUiState.Content(abradolf, EpisodesState.Failed(AppError.Timeout)))
 }
 
 @PreviewTest

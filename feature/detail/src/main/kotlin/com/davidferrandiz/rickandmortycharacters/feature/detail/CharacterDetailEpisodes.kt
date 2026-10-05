@@ -42,6 +42,7 @@ import com.davidferrandiz.rickandmortycharacters.core.ui.component.shimmer
 import com.davidferrandiz.rickandmortycharacters.core.ui.theme.AppShapes
 import com.davidferrandiz.rickandmortycharacters.core.ui.theme.AppTheme
 import com.davidferrandiz.rickandmortycharacters.domain.model.Episode
+import com.davidferrandiz.rickandmortycharacters.domain.model.EpisodesState
 import kotlinx.coroutines.launch
 import com.davidferrandiz.rickandmortycharacters.core.ui.R as CoreUiR
 
@@ -51,7 +52,7 @@ private val ROW_MIN_HEIGHT = 52.dp
 @Composable
 internal fun DetailEpisodes(
     episodeCount: Int,
-    episodes: EpisodesUiState,
+    episodes: EpisodesState,
     expanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
     onRetry: () -> Unit,
@@ -88,9 +89,9 @@ internal fun DetailEpisodes(
                 .padding(horizontal = 16.dp, vertical = 4.dp),
         ) {
             when (episodes) {
-                EpisodesUiState.Loading -> EpisodesLoading()
-                is EpisodesUiState.Error -> EpisodesError(onRetry)
-                is EpisodesUiState.Content -> EpisodesList(
+                EpisodesState.Loading -> EpisodesLoading()
+                is EpisodesState.Failed -> EpisodesError(onRetry)
+                is EpisodesState.Loaded -> EpisodesList(
                     episodes = episodes.episodes,
                     expanded = expanded,
                     onToggle = {

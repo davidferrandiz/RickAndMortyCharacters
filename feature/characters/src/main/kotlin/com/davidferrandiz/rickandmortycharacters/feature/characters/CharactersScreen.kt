@@ -2,8 +2,6 @@ package com.davidferrandiz.rickandmortycharacters.feature.characters
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -44,7 +42,6 @@ internal val MIN_CARD_WIDTH = 160.dp
 internal val GRID_SPACING = 12.dp
 private val OFFLINE_BAR_CLEARANCE = 88.dp
 private val CARD_CORNER_RADIUS = 20.dp
-private val COMPACT_HEIGHT = 480.dp
 private const val CHARACTER_CONTENT_TYPE = "character"
 private const val FOOTER_CONTENT_TYPE = "footer"
 
@@ -90,18 +87,24 @@ internal fun CharactersContent(
     val gridState = rememberSaveable(query.trim(), uiState.status, uiState.gender, saver = LazyGridState.Saver) {
         LazyGridState()
     }
-    val header: @Composable (Modifier) -> Unit = { headerModifier ->
-        CharactersHeader(
-            query = query,
-            uiState = uiState,
-            error = (listState as? CharactersListState.Error)?.error,
-            onQueryChange = onQueryChange,
-            onStatusSelect = onStatusSelect,
-            onOpenFilters = { showFilters = true },
-            modifier = headerModifier,
-        )
-    }
-    val body: @Composable (Dp, Modifier) -> Unit = { topPadding, bodyModifier ->
+    HeaderLayout(
+        modifier = modifier
+            .fillMaxSize()
+            .windowInsetsPadding(
+                WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
+            ),
+        header = { headerModifier ->
+            CharactersHeader(
+                query = query,
+                uiState = uiState,
+                error = (listState as? CharactersListState.Error)?.error,
+                onQueryChange = onQueryChange,
+                onStatusSelect = onStatusSelect,
+                onOpenFilters = { showFilters = true },
+                modifier = headerModifier,
+            )
+        },
+    ) { topPadding, bodyModifier ->
         CharactersBody(
             listState = listState,
             gridState = gridState,
@@ -112,22 +115,6 @@ internal fun CharactersContent(
             onCharacterClick = onCharacterClick,
             modifier = bodyModifier,
         )
-    }
-    BoxWithConstraints(
-        modifier = modifier
-            .fillMaxSize()
-            .windowInsetsPadding(
-                WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
-            ),
-    ) {
-        if (maxHeight < COMPACT_HEIGHT) {
-            CollapsingHeader(header = header) { headerHeight -> body(headerHeight, Modifier.fillMaxSize()) }
-        } else {
-            Column {
-                header(Modifier)
-                body(0.dp, Modifier.weight(1f))
-            }
-        }
     }
     if (showFilters) {
         FiltersSheet(

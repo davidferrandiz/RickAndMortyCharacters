@@ -12,6 +12,7 @@ import com.davidferrandiz.rickandmortycharacters.domain.error.AppError
 import com.davidferrandiz.rickandmortycharacters.domain.model.Character
 import com.davidferrandiz.rickandmortycharacters.domain.model.CharacterStatus
 import com.davidferrandiz.rickandmortycharacters.domain.model.Episode
+import com.davidferrandiz.rickandmortycharacters.domain.model.EpisodesState
 import com.davidferrandiz.rickandmortycharacters.domain.model.Gender
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -57,7 +58,7 @@ class CharacterDetailContentTest {
 
     private fun content(
         character: Character = abradolf,
-        episodes: EpisodesUiState = EpisodesUiState.Content(fiveEpisodes),
+        episodes: EpisodesState = EpisodesState.Loaded(fiveEpisodes),
     ) = CharacterDetailUiState.Content(character, episodes)
 
     @Test
@@ -94,7 +95,7 @@ class CharacterDetailContentTest {
 
     @Test
     fun aCharacterWithFewEpisodesHasNoToggle() {
-        setContent(content(episodes = EpisodesUiState.Content(fiveEpisodes.take(2))))
+        setContent(content(episodes = EpisodesState.Loaded(fiveEpisodes.take(2))))
 
         composeRule.onNodeWithText("Episode 2").assertExists()
         composeRule.onNodeWithText("See all 2 episodes").assertDoesNotExist()
@@ -102,7 +103,7 @@ class CharacterDetailContentTest {
 
     @Test
     fun anEpisodesFailureKeepsTheCharacterAndOffersARetry() {
-        setContent(content(episodes = EpisodesUiState.Error(AppError.Timeout)))
+        setContent(content(episodes = EpisodesState.Failed(AppError.Timeout)))
 
         composeRule.onNodeWithText("Abradolf Lincler").assertIsDisplayed()
         composeRule.onNodeWithText("Retry").performScrollTo().performClick()

@@ -15,7 +15,7 @@ Requirements: a recent Android Studio with JDK 17. The project uses AGP 9.3.3, K
 | Command | What it does |
 |---|---|
 | `./gradlew :app:installDebug` | Installs the app on a connected device or emulator |
-| `./gradlew test` | Runs the 76 JVM tests |
+| `./gradlew test` | Runs the 81 JVM tests |
 | `./gradlew connectedDebugAndroidTest` | Runs the 27 instrumented tests; needs a device |
 | `./gradlew validateDebugScreenshotTest` | Compares components and screen states with their reference screenshots |
 
@@ -90,7 +90,7 @@ The API allows about 40 requests every 10 seconds per IP and then answers `429` 
 
 ## Testing
 
-103 tests, 76 on the JVM and 27 instrumented, written where there is a decision and not where there is delegation. They use fakes; there is no mocking library in the project.
+108 tests, 81 on the JVM and 27 instrumented, written where there is a decision and not where there is delegation. They use fakes; there is no mocking library in the project.
 
 - **Contract tests** against real API responses: parsing rules, the `404` that means "no results", HTTP caching and rate limiting.
 - **Data**: mappers, the search `PagingSource`, the rate limiter, and the `RemoteMediator` against a real in-memory Room.
