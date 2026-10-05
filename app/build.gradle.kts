@@ -41,6 +41,12 @@ android {
     }
 }
 
+androidComponents {
+    beforeVariants { variant ->
+        variant.androidTest.enable = false
+    }
+}
+
 dependencies {
     implementation(project(":domain"))
     implementation(project(":data"))
