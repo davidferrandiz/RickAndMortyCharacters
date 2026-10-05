@@ -23,7 +23,7 @@ private const val IMAGE_MEMORY_CACHE_PERCENT = 0.25
 class RickAndMortyApp : Application(), SingletonImageLoader.Factory {
 
     @Inject
-    @field:ImageHttpClient
+    @ImageHttpClient
     lateinit var imageHttpClient: Lazy<OkHttpClient>
 
     override fun newImageLoader(context: PlatformContext): ImageLoader = ImageLoader.Builder(context)

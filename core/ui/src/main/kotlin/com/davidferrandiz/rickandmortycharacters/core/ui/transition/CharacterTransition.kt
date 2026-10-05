@@ -10,13 +10,19 @@ import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.State
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 
 const val TRANSITION_DURATION_MILLIS = 360
@@ -38,19 +44,38 @@ fun Modifier.characterImageSharedElement(
 ): Modifier {
     val sharedTransitionScope = LocalSharedTransitionScope.current ?: return this
     val animatedVisibilityScope = LocalAnimatedVisibilityScope.current ?: return this
-    val animatedRadius by animatedVisibilityScope.transition.animateDp(
+    val animatedRadius = animatedVisibilityScope.transition.animateDp(
         transitionSpec = { transitionSpec() },
         label = "characterImageCorner",
     ) { state -> if (state == EnterExitState.Visible) cornerRadius else counterpartCornerRadius }
+    val overlayClip = remember(animatedRadius) { TopCornersOverlayClip(animatedRadius) }
     return with(sharedTransitionScope) {
         sharedElement(
             sharedContentState = rememberSharedContentState(key = "character-image-$characterId"),
             animatedVisibilityScope = animatedVisibilityScope,
             boundsTransform = { _, _ -> transitionSpec() },
-            clipInOverlayDuringTransition = OverlayClip(
-                RoundedCornerShape(topStart = animatedRadius, topEnd = animatedRadius),
-            ),
+            clipInOverlayDuringTransition = overlayClip,
         )
+    }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+private class TopCornersOverlayClip(
+    private val radius: State<Dp>,
+) : SharedTransitionScope.OverlayClip {
+
+    private val path = Path()
+
+    override fun getClipPath(
+        sharedContentState: SharedTransitionScope.SharedContentState,
+        bounds: Rect,
+        layoutDirection: LayoutDirection,
+        density: Density,
+    ): Path {
+        val corner = CornerRadius(with(density) { radius.value.toPx() })
+        path.rewind()
+        path.addRoundRect(RoundRect(rect = bounds, topLeft = corner, topRight = corner))
+        return path
     }
 }
 

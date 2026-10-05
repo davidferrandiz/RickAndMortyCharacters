@@ -36,6 +36,10 @@ android {
     buildFeatures {
         compose = true
     }
+
+    lint {
+        lintConfig = rootProject.file("lint.xml")
+    }
 }
 
 dependencies {
